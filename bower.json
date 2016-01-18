@@ -1,0 +1,31 @@
+{
+  "name": "angular-http-cache-buster",
+  "homepage": "https://github.com/paquettea/angular-http-cache-buster",
+  "authors": [
+    "Alexandre Paquette <alexandre.paquette@nadrox.com>"
+  ],
+  "description": "A smart and configurable interceptor that adds a cache buster parameter to urls called by $http.get",
+  "main": "angular-http-cache-buster.min.js",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "angular",
+    "$http",
+    "interceptor",
+    "cache"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    ".idea"
+  ],
+  "devDependencies": {
+    "angular-mocks": "~1.4.8",
+    "angular": "1.4"
+  }
+}
