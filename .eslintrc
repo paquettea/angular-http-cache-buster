@@ -7,15 +7,16 @@
     "angular": false,
     "console": false,
     "ActiveXObject": false,
-    "CryptoJS": false,
-    "siteLang": true,
-    "FP_ASSET_ROOT_PATH": true,
-    "FP_APP_BUILD_TIMESTAMP": true
+    "beforeEach": false,
+    "inject": false,
+    "it": false,
+    "describe": false,
+    "afterEach": false,
+    "module": true
   },
   "rules": {
     "comma-dangle": [2, "never"],
     "no-cond-assign": 1,
-    //TODO: we should add this rule into a post commit hook (error level)
     "no-console": 1,
     "no-constant-condition": 2,
     "no-control-regex": 2,
@@ -132,7 +133,7 @@
       }
     ],
     "linebreak-style": [1, "unix"],
-    "max-nested-callbacks": [2, 3],
+    "max-nested-callbacks": [2, 5],
     "new-cap": 2,
     "new-parens": 2,
     "newline-after-var": [1, "always"],
