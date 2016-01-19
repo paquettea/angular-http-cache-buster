@@ -40,7 +40,7 @@ http requests going all over the place. When using such method, it's important t
 
  The reason for not using the blacklist is because vendor modules might can also have url patterns for their templates, so there is no ways to make sure that you are taking them under consideration. $templateCache on the other hand is a strong indication that the purpose of the request is to load a template.
 
-If you don't want this behavior, you may set ```HttpCacheBusterInterceptorProvider.affectTemplate = true```. It will ignore the request config module and always proceed to the white/black list rules check.
+If you don't want this behavior, you may set ```HttpCacheBusterInterceptorProvider.affectTemplate = true```. It will ignore the request cache module and always proceed to the white/black list rules check.
 
 ### Other scenarios
 
