@@ -100,8 +100,6 @@ angular.module('paquettea.http-cache-buster').provider('HttpCacheBusterIntercept
                             return config;
                         }
 
-
-
                         if (isCompatibleUrl(config.url)) {
                             config.url = addCacheBusterToUrl(config);
                         }
