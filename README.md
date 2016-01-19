@@ -65,14 +65,23 @@ include ```bower_components/dist/angular-http-cache-buster.min.js``` to your js 
 All configurations are done on the provider: ```HttpCacheBusterInterceptor```
 
 
-### pushToWhiteList(RegExp)
-TODO
+### affectTemplate [provider level]
 
-### pushToBlackList(RegExp)
-TODO
+If false (default), it will prevent cache buster on all url that are called to be stored in ```$templateCache```, without consideration for white list or black list rules. When set to true, the black/white list rules will also apply to those urls.
 
-### setQsParameterValue(function|value)
-TODO
+### pushToWhiteList(RegExp) [provider level]
 
-### qsParameterName
-TODO
+Adds a regular expression that the url is tested against. If a match is returned, the url will get the cache buster. If not, or if also matching a blacklist rule, the cache buster is omitted. One rule per function call is added.
+
+### pushToBlackList(RegExp) [provider level]
+
+Adds a regular expression that the url is tested against. If a match is returned, the url won't get the cache buster, otherwise it will. One rule per function call is added.
+
+### setQsParameterValue(function|value) [at provider and service level]
+By default, it is a function returning ```new Date().getTime()```
+
+If you assign a value, it value will remain the same on each request (can be a value representing the app version for example). If a function, it will be executed for each request and the value will be the return of the function.
+
+### qsParameterName [at provider level] or setQsParameterName [at service level]
+
+A String value. it will represent the key of the added query string parameter

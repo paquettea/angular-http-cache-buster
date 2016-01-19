@@ -33,6 +33,7 @@ function buildAngularAppTask() {
         .pipe($.sourcemaps.init())
         .pipe($.ngAnnotate())
         .pipe($.concat('angular-http-cache-buster.min.js'))
+        .pipe($.uglify())
         .pipe($.sourcemaps.write(paths.dist.sourcemaps))
         .pipe(gulp.dest(paths.dist.js));
 }
