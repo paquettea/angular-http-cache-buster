@@ -40,7 +40,7 @@ http requests going all over the place. When using such method, it's important t
 
  The reason for not using the blacklist is because vendor modules might can also have url patterns for their templates, so there is no ways to make sure that you are taking them under consideration. $templateCache on the other hand is a strong indication that the purpose of the request is to load a template.
 
-If you don't want this behavior, you may set ```HttpCacheBusterInterceptorProvider.affectTemplate = true```. It will ignore the request cache module and always proceed to the white/black list rules check.
+If you don't want this behavior, you may set ```HttpCacheBusterInterceptorProvider.affectTemplate = true```. It will ignore the request cach module and always proceed to the white/black list rules check.
 
 ### Other scenarios
 
@@ -62,7 +62,7 @@ include ```bower_components/dist/angular-http-cache-buster.min.js``` to your js 
 
 ## Configuration
 
-All configurations are done on the provider: ```HttpCacheBusterInterceptor```
+All configurations are done on the provider: ```HttpCacheBusterInterceptorProvider```
 
 
 ### affectTemplate [provider level]
@@ -85,3 +85,57 @@ If you assign a value, it value will remain the same on each request (can be a v
 ### qsParameterName [at provider level] or setQsParameterName [at service level]
 
 A String value. it will represent the key of the added query string parameter
+
+## Override per call
+
+Any $http configuration can override the cache buster behavior by adding the configuration ``` useCacheBuster```
+
+ - When ```true```, the cache buster will systematically be added to the url
+ - When ```function|value```, the cache buster will systematically be added tot the url using the provided function or value to generate it.
+
+ - When ```false```, the cache buster will never be added to the url
+
+Example from the tests:
+```javascript
+    $httpBackend.expectGET('theUrl').respond(200);
+
+    $http({
+        useCacheBuster: false,
+        method: 'GET',
+        cache: true,
+        url: 'theUrl'
+    });
+```
+```javascript
+    $httpBackend.expectGET(/theUrl\?cb\=[0-9]+$/).respond(200);
+
+    $http({
+        useCacheBuster: true,
+        method: 'GET',
+        cache: true,
+        url: 'theUrl'
+    });
+```
+```javascript
+    var customCbValue = 989898;
+
+    $httpBackend.expectGET('theUrl?cb=' + customCbValue).respond(200);
+
+    //using value
+    $http({
+        useCacheBuster: customCbValue,
+        method: 'GET',
+        cache: true,
+        url: 'theUrl'
+    });
+
+    //using function
+    $http({
+        useCacheBuster: function () {
+            return customCbValue;
+        },
+        method: 'GET',
+        cache: true,
+        url: 'theUrl'
+    });
+```

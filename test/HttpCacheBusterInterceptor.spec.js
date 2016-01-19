@@ -1,6 +1,7 @@
 'use strict';
 
-var injections = ['$http', '$httpBackend', '$templateCache', 'HttpCacheBusterInterceptor', '$compile', '$rootScope','$window'];
+var injections = ['$http', '$httpBackend', '$templateCache', 'HttpCacheBusterInterceptor', '$compile', '$rootScope',
+                  '$window', '$cacheFactory'];
 var genericUrl = '/some/path.xml';
 var templateUrl = '/this/is/a/template/file.html';
 var cbValue = 10;
@@ -76,6 +77,57 @@ describe('HttpCacheBusterInterceptor', function () {
         it('should add cache buster for get requests using ampersand for url with a query string', function () {
             s.$httpBackend.expectGET(/theUrl\?wut=somevalue\&cb\=[0-9]+$/).respond(200);
             s.$http.get('theUrl?wut=somevalue');
+            s.$httpBackend.flush();
+        });
+
+        it('should add custom cache buster for get requests that have useCacheBuster custom value in their configuration', function () {
+
+            var customCbValue = 989898;
+
+            s.$httpBackend.expectGET('theUrl?cb=' + customCbValue).respond(200);
+
+            s.$http({
+                useCacheBuster: customCbValue,
+                method: 'GET',
+                cache: true,
+                url: 'theUrl'
+            });
+
+            s.$http({
+                useCacheBuster: function () {
+                    return customCbValue;
+                },
+                method: 'GET',
+                cache: true,
+                url: 'theUrl'
+            });
+
+            s.$httpBackend.flush();
+        });
+
+        it('should add cache buster for get requests that have useCacheBuster to true in their configuration', function () {
+            s.$httpBackend.expectGET(/theUrl\?cb\=[0-9]+$/).respond(200);
+
+            s.$http({
+                useCacheBuster: true,
+                method: 'GET',
+                cache: true,
+                url: 'theUrl'
+            });
+
+            s.$httpBackend.flush();
+        });
+
+        it('should NOT add cache buster for get requests that have useCacheBuster to FALSE in their configuration', function () {
+            s.$httpBackend.expectGET('theUrl').respond(200);
+
+            s.$http({
+                useCacheBuster: false,
+                method: 'GET',
+                cache: true,
+                url: 'theUrl'
+            });
+
             s.$httpBackend.flush();
         });
     });
@@ -262,7 +314,7 @@ describe('HttpCacheBusterInterceptor', function () {
             s.$http.get('blacklisted');
         });
 
-        it('should add cache buster if matched by whitelist', function (){
+        it('should add cache buster if matched by whitelist', function () {
             s.$httpBackend.expectGET('whitelisted?' + cbName + '=' + cbValue).respond(200);
             s.$http.get('whitelisted');
             s.$httpBackend.flush();
@@ -295,7 +347,7 @@ describe('HttpCacheBusterInterceptor', function () {
 
             s.$httpBackend.flush();
 
-            setTimeout(function (){
+            setTimeout(function () {
                 s.$httpBackend.whenGET(fileNameRegex).respond(200, '');
                 s.$http.get(fileName).then(function (response) {
                     callUrl2 = response.config.url;
@@ -313,14 +365,14 @@ describe('HttpCacheBusterInterceptor', function () {
 
         });
 
-        it('should not vary cache buster parameter on each call when mode is set to a fixed value', function(done){
+        it('should not vary cache buster parameter on each call when mode is set to a fixed value', function (done) {
             var fileName = 'someFile';
             var fileNameRegex = new RegExp(fileName + '.*');
             var callUrl1;
             var callUrl2;
 
             s.HttpCacheBusterInterceptor.setQsParameterName('time');
-            s.HttpCacheBusterInterceptor.setQsParameterValue (function () {
+            s.HttpCacheBusterInterceptor.setQsParameterValue(function () {
                 return 15;
             });
 
@@ -331,7 +383,7 @@ describe('HttpCacheBusterInterceptor', function () {
 
             s.$httpBackend.flush();
 
-            setTimeout(function (){
+            setTimeout(function () {
                 s.$httpBackend.whenGET(fileNameRegex).respond(200, '');
                 s.$http.get(fileName).then(function (response) {
                     callUrl2 = response.config.url;

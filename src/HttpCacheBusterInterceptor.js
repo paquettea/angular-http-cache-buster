@@ -5,7 +5,15 @@ angular.module('paquettea.http-cache-buster').provider('HttpCacheBusterIntercept
     var whiteListRules = [];
     var customQsParameterValue;
 
-    function qsParameterValue() {
+    function qsParameterValue(config) {
+        if (config && config.useCacheBuster) {
+            if (angular.isFunction(config.useCacheBuster)) {
+                return config.useCacheBuster();
+            } else if (config.useCacheBuster !== true) {
+                return config.useCacheBuster;
+            }
+        }
+
         if (customQsParameterValue) {
             return customQsParameterValue();
         }
@@ -26,10 +34,10 @@ angular.module('paquettea.http-cache-buster').provider('HttpCacheBusterIntercept
         return false;
     }
 
-    function addCacheBusterToUrl(url) {
-        return url +
-            (url.indexOf('?') === -1 ? '?' : '&') +
-            provider.qsParameterName + '=' + qsParameterValue();
+    function addCacheBusterToUrl(config) {
+        return config.url +
+            (config.url.indexOf('?') === -1 ? '?' : '&') +
+            provider.qsParameterName + '=' + qsParameterValue(config);
     }
 
     provider = {
@@ -79,12 +87,23 @@ angular.module('paquettea.http-cache-buster').provider('HttpCacheBusterIntercept
             service = {
                 request: function (config) {
                     if (config.method.toUpperCase() === 'GET') {
+                        if (angular.isDefined(config.useCacheBuster) && config.useCacheBuster !== false) {
+                            config.url = addCacheBusterToUrl(config);
+                            return config;
+                        }
+
+                        if (config.useCacheBuster === false) {
+                            return config;
+                        }
+
                         if (!provider.affectTemplate && config.cache === $templateCache) {
                             return config;
                         }
 
+
+
                         if (isCompatibleUrl(config.url)) {
-                            config.url = addCacheBusterToUrl(config.url);
+                            config.url = addCacheBusterToUrl(config);
                         }
                     }
 
